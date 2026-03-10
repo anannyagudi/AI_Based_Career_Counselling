@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Dark mode palette */
+  --color-dark-bg: #0a0a0c;
+  --color-dark-text: #f9fafb;
+  --color-dark-card: #141417;
+  --color-dark-border: #1f1f23;
+
+  /* Light mode refined palette */
+  --color-light-bg: #fcfdfe;
+  --color-light-card: #ffffff;
+  --color-light-text: #111827;
+  --color-light-subtext: #4b5563;
+
+  /* Primary & Accent Colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+}
+
+@layer base {
+  body {
+    @apply bg-light-bg text-light-text transition-colors duration-500 font-sans antialiased;
+  }
+
+  .dark body {
+    @apply bg-dark-bg text-dark-text;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-primary-500/20 transition-all duration-300 transform hover:-translate-y-1 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-white dark:bg-dark-card text-light-text dark:text-dark-text border border-gray-100 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg font-bold py-3 px-8 rounded-xl shadow-sm transition-all duration-300;
+  }
+
+  .card-glass {
+    @apply bg-white/70 dark:bg-dark-card/70 backdrop-blur-xl shadow-2xl shadow-gray-200/50 dark:shadow-black/20 rounded-3xl border border-white/50 dark:border-white/5 p-8 transition-all duration-300;
+  }
+}
