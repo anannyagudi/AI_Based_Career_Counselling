@@ -44,7 +44,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-light-bg dark:bg-dark-bg">
+    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-light-bg dark:bg-dark-bg bg-mesh">
       <header className="fixed w-full top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-primary-600 dark:text-primary-500 font-extrabold text-xl tracking-tight">
@@ -107,7 +107,7 @@ function AppContent() {
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 pt-24 pb-12">
+      <main className="flex-1 container mx-auto px-4 pt-24 pb-12 relative z-10">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -141,7 +141,12 @@ function App() {
 
 function Home() {
   return (
-    <div className="flex flex-col items-center space-y-24 py-12">
+    <div className="relative flex flex-col items-center space-y-24 py-12">
+      {/* Decorative Blobs */}
+      <div className="absolute top-0 -left-20 w-[30rem] h-[30rem] bg-gradient-to-br from-primary-200/40 to-transparent dark:from-primary-900/20 rounded-full filter blur-[100px] animate-blob pointer-events-none"></div>
+      <div className="absolute top-40 -right-20 w-[30rem] h-[30rem] bg-gradient-to-br from-teal-200/40 to-transparent dark:from-teal-900/20 rounded-full filter blur-[100px] animate-blob animation-delay-2000 pointer-events-none"></div>
+      <div className="absolute -bottom-40 left-40 w-[30rem] h-[30rem] bg-gradient-to-br from-purple-200/40 to-transparent dark:from-purple-900/20 rounded-full filter blur-[100px] animate-blob animation-delay-4000 pointer-events-none"></div>
+
       {/* Hero Section */}
       <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto space-y-12">
         <div className="space-y-6">

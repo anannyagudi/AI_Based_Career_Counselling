@@ -24,6 +24,16 @@ router.get('/topic/:topic', async (req, res) => {
   }
 });
 
+// Get courses created by the logged-in coach
+router.get('/my-courses', authMiddleware, async (req, res) => {
+  try {
+    const courses = await Course.find({ coach: req.user.id });
+    res.json(courses);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Get a single course by ID
 router.get('/:id', async (req, res) => {
   try {
@@ -81,14 +91,5 @@ router.post('/', [authMiddleware, authorize('coach')], async (req, res) => {
   }
 });
 
-// Get courses created by the logged-in coach
-router.get('/my-courses', authMiddleware, async (req, res) => {
-  try {
-    const courses = await Course.find({ coach: req.user.id });
-    res.json(courses);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 module.exports = router;

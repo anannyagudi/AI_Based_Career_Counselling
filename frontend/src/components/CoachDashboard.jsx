@@ -27,7 +27,8 @@ const CoachDashboard = () => {
       });
       setCourses(res.data);
     } catch (err) {
-      console.error('Failed to fetch courses');
+      console.error('Failed to fetch courses', err);
+      alert(`Error fetching courses: ${err.response?.data?.error || err.message}`);
     } finally {
       setLoading(false);
     }
