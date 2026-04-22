@@ -2,17 +2,28 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // Register User
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    let { name, email, password, role } = req.body;
+    
+    // Normalize email
+    if (email) {
+      email = email.toLowerCase().trim();
+    }
+
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    user = new User({ name, email, password, role: role || 'student' });
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user = new User({ name, email, password: hashedPassword, role: role || 'student' });
     await user.save();
 
     const payload = {
@@ -33,9 +44,23 @@ router.post('/register', async (req, res) => {
 // Login User
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    
+    // Normalize email
+    if (email) {
+      email = email.toLowerCase().trim();
+    }
+
     const user = await User.findOne({ email });
-    if (!user || user.password !== password) {
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Verify password using bcrypt
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    // Handle old plain-text passwords for backward compatibility (optional but good idea), or just check match
+    if (!isMatch && user.password !== password) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 

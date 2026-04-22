@@ -4,6 +4,10 @@ from typing import List
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 import random
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -40,22 +44,31 @@ def predict_career(request: PredictionRequest):
         if r < 1 or r > 4:
             raise HTTPException(status_code=400, detail="Responses must be between 1 and 4")
 
-    input_data = np.array(request.responses).reshape(1, -1)
-    
-    prediction = model.predict(input_data)[0]
-    
-    # Get probabilities to calculate a mock "confidence score"
-    probabilities = model.predict_proba(input_data)[0]
-    confidence = float(max(probabilities) * 100) # percentage
-
-    # If it's too low (due to dummy random data), we boost it randomly for the demo
-    if confidence < 50:
-        confidence += random.uniform(20.0, 40.0)
+    try:
+        input_data = np.array(request.responses).reshape(1, -1)
         
-    return {
-        "recommendedCareer": prediction,
-        "confidenceScore": round(confidence, 2)
-    }
+        prediction = model.predict(input_data)[0]
+        
+        # Get probabilities to calculate a mock "confidence score"
+        probabilities = model.predict_proba(input_data)[0]
+        confidence = float(max(probabilities) * 100) # percentage
+
+        # If it's too low (due to dummy random data), we boost it randomly for the demo
+        if confidence < 50:
+            confidence += random.uniform(20.0, 40.0)
+            
+        # Ensure confidence doesn't go over 100
+        confidence = min(confidence, 100.0)
+
+        logger.info(f"Predicted {prediction} with {confidence}% confidence")
+            
+        return {
+            "recommendedCareer": str(prediction),
+            "confidenceScore": round(confidence, 2)
+        }
+    except Exception as e:
+        logger.error(f"Error during prediction: {e}")
+        raise HTTPException(status_code=500, detail="Internal ML engine error")
 
 if __name__ == "__main__":
     import uvicorn

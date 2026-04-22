@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { questions10th, questions12th } from '../data/questions';
+import CourseCard from './CourseCard';
 
 const Questionnaire = () => {
   const { category } = useParams();
@@ -11,6 +12,8 @@ const Questionnaire = () => {
   const [answers, setAnswers] = useState(new Array(10).fill(null));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState(null);
+  const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const [loadingCourses, setLoadingCourses] = useState(false);
   
   const questions = category === '10th' ? questions10th : questions12th;
   const categoryLabel = category === '10th' ? 'After 10th' : 'After 12th';
@@ -56,6 +59,18 @@ const Questionnaire = () => {
 
       const response = await axios.post('http://localhost:5000/api/predict', payload);
       setResult(response.data);
+      
+      // Fetch related courses
+      setLoadingCourses(true);
+      try {
+        const coursesRes = await axios.get(`http://localhost:5000/api/courses/topic/${response.data.recommendedCareer}`);
+        setRecommendedCourses(coursesRes.data);
+      } catch (err) {
+        console.error("Failed to fetch related courses:", err);
+      } finally {
+        setLoadingCourses(false);
+      }
+
     } catch (error) {
       console.error("Error submitting assessment:", error);
       alert("An error occurred while submitting. Make sure your local servers are running.");
@@ -66,8 +81,8 @@ const Questionnaire = () => {
 
   if (result) {
     return (
-      <div className="max-w-2xl mx-auto pt-10 animate-fade-in">
-        <div className="card-glass text-center space-y-8">
+      <div className="max-w-5xl mx-auto pt-10 animate-fade-in space-y-12">
+        <div className="max-w-2xl mx-auto card-glass text-center space-y-8">
           <div className="mx-auto w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center shadow-inner">
             <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
           </div>
@@ -93,10 +108,37 @@ const Questionnaire = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          <button onClick={() => navigate('/')} className="btn-primary w-full text-lg">
-            Return to Home
-          </button>
+        <div>
+          {loadingCourses ? (
+             <div className="py-8">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
+             </div>
+          ) : recommendedCourses.length > 0 && (
+            <div className="text-left w-full space-y-8 animate-fade-in mx-auto mt-4 px-4">
+              <h3 className="text-3xl font-extrabold text-light-text dark:text-dark-text border-b border-gray-100 dark:border-gray-800 pb-4 text-center">
+                Recommended Courses for You
+              </h3>
+              <div className={`grid gap-8 w-full ${
+                recommendedCourses.length === 1 
+                  ? 'grid-cols-1 max-w-md mx-auto' 
+                  : recommendedCourses.length === 2
+                    ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto'
+                    : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+              }`}>
+                {recommendedCourses.map(course => (
+                  <CourseCard key={course._id} course={course} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="max-w-2xl mx-auto mt-12 pb-12">
+            <button onClick={() => navigate('/')} className="btn-primary w-full text-lg">
+              Return to Home
+            </button>
+          </div>
         </div>
       </div>
     );
