@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Book, User, Tag, ShieldCheck, ChevronLeft, CreditCard, CheckCircle, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -19,7 +20,7 @@ const CourseDetail = () => {
 
   const fetchCourse = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/courses/${id}`);
+      const res = await axios.get(`${API_URL}/api/courses/${id}`);
       setCourse(res.data);
     } catch (err) {
       setError('Failed to fetch course details');
@@ -46,7 +47,7 @@ const CourseDetail = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        `http://localhost:5000/api/courses/${id}/enroll`,
+        `${API_URL}/api/courses/${id}/enroll`,
         {},
         { headers: { 'x-auth-token': token } }
       );

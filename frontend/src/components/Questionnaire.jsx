@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { questions10th, questions12th } from '../data/questions';
 import CourseCard from './CourseCard';
+import { API_URL } from '../config';
 
 const Questionnaire = () => {
   const { category } = useParams();
@@ -57,13 +58,13 @@ const Questionnaire = () => {
         responses: answers
       };
 
-      const response = await axios.post('http://localhost:5000/api/predict', payload);
+      const response = await axios.post(`${API_URL}/api/predict`, payload);
       setResult(response.data);
       
       // Fetch related courses
       setLoadingCourses(true);
       try {
-        const coursesRes = await axios.get(`http://localhost:5000/api/courses/topic/${response.data.recommendedCareer}`);
+        const coursesRes = await axios.get(`${API_URL}/api/courses/topic/${response.data.recommendedCareer}`);
         setRecommendedCourses(coursesRes.data);
       } catch (err) {
         console.error("Failed to fetch related courses:", err);

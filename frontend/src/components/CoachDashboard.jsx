@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { PlusCircle, BookOpen, Clock, Tag, DollarSign } from 'lucide-react';
+import { API_URL } from '../config';
 
 const CoachDashboard = () => {
   const { token, user } = useAuth();
@@ -22,7 +23,7 @@ const CoachDashboard = () => {
 
   const fetchMyCourses = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/courses/my-courses', {
+      const res = await axios.get(`${API_URL}/api/courses/my-courses`, {
         headers: { 'x-auth-token': token }
       });
       setCourses(res.data);
@@ -41,7 +42,7 @@ const CoachDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/courses', formData, {
+      await axios.post(`${API_URL}/api/courses`, formData, {
         headers: { 'x-auth-token': token }
       });
       setShowForm(false);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Book, Search } from 'lucide-react';
 import CourseCard from './CourseCard';
+import { API_URL } from '../config';
 
 const ExploreCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -15,9 +16,9 @@ const ExploreCourses = () => {
 
   const fetchCourses = async () => {
     try {
-      let url = 'http://localhost:5000/api/courses';
+      let url = `${API_URL}/api/courses`;
       if (filter) {
-        url = `http://localhost:5000/api/courses/topic/${filter}`;
+        url = `${API_URL}/api/courses/topic/${filter}`;
       }
       const res = await axios.get(url);
       setCourses(res.data);

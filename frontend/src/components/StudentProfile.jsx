@@ -3,6 +3,7 @@ import axios from 'axios';
 import { User, Mail, Calendar, BookOpen, ChevronRight, Award, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 const StudentProfile = () => {
   const { user: authUser } = useAuth();
@@ -17,7 +18,7 @@ const StudentProfile = () => {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/user/profile', {
+      const res = await axios.get(`${API_URL}/api/user/profile`, {
         headers: { 'x-auth-token': token }
       });
       setProfile(res.data);
